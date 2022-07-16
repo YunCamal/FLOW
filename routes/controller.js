@@ -6,7 +6,6 @@ const Views = '../views'
 // 전체 리스트(default)
 exports.findAll = function (req, res) {
   Entity.findAll(function (err, results, field) {
-      console.log("controller");
       if (err) res.send(err);
       console.log("res", results);
       res.render(Views+'/index.ejs',{results:results})
@@ -17,14 +16,16 @@ exports.findAll = function (req, res) {
 // 등록
 exports.create = function (req, res) {
   let exten_text = req.body.exten_text;
+  let total_text = Number(req.body.total_text);
   let useyn = 1;
-
 
   // validation(확장자 조회)
   Entity.findOne(exten_text,function (err, results, field) {
-    if(results.length == 0){
+    if(results.length == 0) {
         if (req.body.constructor === Object && Object.keys(req.body.exten_text.trim()).length === 0) {
           return res.status(400).render('alert', {error: '확장자 값이 없습니다.'});
+        } else if(total_text >= 200) {  
+          return res.status(400).render('alert', {error: '커스텀 확장자가 200개가 넘었습니다.'});
         } else {
 
           // 확장자 등록
@@ -34,7 +35,7 @@ exports.create = function (req, res) {
           });
         }
 
-    } else{
+    } else {
         return res.status(400).render('alert', {error: '값이 이미 있습니다.'});
     }
   });

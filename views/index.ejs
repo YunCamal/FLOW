@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        
+        <title>파일 확장자 차단</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> 
+    </head>
+
+    <style>
+        .bd-example {
+        padding: 1.5rem;
+        margin-right: 0;
+        margin-left: 0;
+        border-width: 1px;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+        }
+        .tab { white-space: pre; }
+    </style>
+
+    <body>        
+        <div>
+            <hr>
+            <h1>◎파일 확장자 차단</h1>
+            <hr>
+            <h4>파일확장자에 따라 특정 형식의 파일을 첨부하거나 전송하지 못하도록 제한 </h5>
+        </div>
+
+        <div class="bd-example">
+            <div class="gird">
+                <div class=""><span class="tab">고정확장자 &#9;</span>
+                    <input type="checkbox" name="chk" id='<%= results[0].exten_text %>' value='<%= results[0].useyn %>'><%= results[0].exten_text %>
+                    <input type="checkbox" name="chk" id='<%= results[1].exten_text %>' value='<%= results[1].useyn %>'><%= results[1].exten_text %>
+                    <input type="checkbox" name="chk" id='<%= results[2].exten_text %>' value='<%= results[2].useyn %>'><%= results[2].exten_text %>
+                    <input type="checkbox" name="chk" id='<%= results[3].exten_text %>' value='<%= results[3].useyn %>'><%= results[3].exten_text %>
+                    <input type="checkbox" name="chk" id='<%= results[4].exten_text %>' value='<%= results[4].useyn %>'><%= results[4].exten_text %>
+                    <input type="checkbox" name="chk" id='<%= results[5].exten_text %>' value='<%= results[5].useyn %>'><%= results[5].exten_text %>
+                    <input type="checkbox" name="chk" id='<%= results[6].exten_text %>' value='<%= results[6].useyn %>'><%= results[6].exten_text %>
+                    <form action="/" method="post"><span class="tab">커스텀확장자 &#9;</span>
+                        <input type="text" name="exten_text" maxlength="20" placeholder="확장자 입력">
+                        <input type="submit" value="+추가">
+                    </form>
+                </div>
+            </div>
+
+            <div class="gird">
+                <div class="">
+                    <%= parseInt(results.length) - 7  %> / 200
+                    <div class="bd-content ps-lg-4">
+                        <% for (let i = 7; i < results.length ; i++) { %>
+                            <input type="button" class="btn btn-light" name="delBtn" id="<%= results[i].exten_text %>" value="<%= results[i].exten_text %> X">
+                        <% } %>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <script>
+            
+            $('input[name=chk]:checkbox').each(function(i,v) {
+                if($('input[name=chk]:checkbox')[i].value == '1'){ 
+                    this.checked = true; 
+                }
+            });
+
+            $('input[name=chk]:checkbox').on('click',function (e) {
+                let useyn = $(this).val();
+                let exten_text = e.target.id;
+
+                if(useyn == '0') {
+                    useyn = 1; 
+                    $("#"+exten_text).val(useyn);
+                } else if(useyn = 1) {
+                    useyn = 0; 
+                    $("#"+exten_text).val(useyn);
+                };
+
+                $.ajax({
+                    method: 'PUT',
+                    url: '/update/',
+                    data: {exten_text : exten_text, useyn : useyn}
+
+                }).done(function(){
+                    location.reload();
+
+                }).fail(function(xhr,code,err){
+                    alert(err);         
+                });
+            });
+
+            
+            $('input[name=delBtn]:button').on('click',function (e) {
+                let exten_text = e.target.id;
+                
+                $.ajax({
+                    method: 'DELETE',
+                    url: '/delete/',
+                    data: { 'exten_text': exten_text }
+
+                }).done(function(){
+                    location.reload();
+
+                }).fail(function(xhr,code,err){
+                    alert(err);         
+                });
+            });
+        
+        </script>
+    </body>
+
+</html>
